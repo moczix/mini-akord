@@ -28,4 +28,15 @@ public interface HarvestDao {
 
     @Delete
     void delete(Harvest harvests);
+
+    @Query("DELETE FROM harvests WHERE employee_id = :employeeId")
+    void deleteHarvestsByEmployee(int employeeId);
+
+
+    @Query("SELECT SUM(amount) FROM harvests WHERE employee_id = :employeeId")
+    int getSumAmountAllTimeByEmployee(int employeeId);
+
+
+    @Query("SELECT SUM(amount) FROM harvests WHERE employee_id = :employeeId AND harvest_at = :date")
+    int getSumAmountAtDateByEmployee(int employeeId, String date);
 }

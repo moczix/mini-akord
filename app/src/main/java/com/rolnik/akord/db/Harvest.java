@@ -23,8 +23,8 @@ public class Harvest {
     private int employeeId;
 
     private int amount;
-    private int cost;
-    private int weight;
+    private double cost;
+    private double weight;
 
     @ColumnInfo(name = "harvest_at")
     @TypeConverters({DateConverter.class})
@@ -54,19 +54,19 @@ public class Harvest {
         this.amount = amount;
     }
 
-    public int getCost() {
+    public double getCost() {
         return cost;
     }
 
-    public void setCost(int cost) {
+    public void setCost(double cost) {
         this.cost = cost;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(double weight) {
         this.weight = weight;
     }
 
@@ -84,6 +84,7 @@ public class Harvest {
                 ", amount: " + this.amount +
                 ", price: " + this.cost +
                 ", weight: " + this.weight +
+                ", employeeId: " + this.employeeId +
                 ", harvestAt: " + DateConverter.dfPattern.format(this.harvestAt) +
                 "}";
     }

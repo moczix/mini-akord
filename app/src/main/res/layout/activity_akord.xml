@@ -99,6 +99,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:hint="Stawka zł/kg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
@@ -107,8 +108,8 @@
                 android:id="@+id/price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Stawka zł/kg"
-                android:inputType="numberSigned" />
+
+                android:inputType="numberDecimal" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -117,7 +118,7 @@
             android:id="@+id/weightWrapper"
             android:layout_width="0dp"
 
-
+            android:hint="Waga kg/szt"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
@@ -131,8 +132,8 @@
                 android:id="@+id/weight"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Waga kg/szt"
-                android:inputType="numberSigned" />
+
+                android:inputType="numberDecimal" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -223,6 +224,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:hint="Stawka zł/kg"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/summary2">
@@ -231,8 +233,8 @@
                 android:id="@+id/priceSummary"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Stawka zł/kg"
-                android:inputType="numberSigned" />
+
+                android:inputType="numberDecimal" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -246,6 +248,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:hint="Waga kg/szt"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -255,8 +258,8 @@
                 android:id="@+id/weightSumarry"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Waga kg/szt"
-                android:inputType="numberSigned" />
+
+                android:inputType="numberDecimal" />
 
         </android.support.design.widget.TextInputLayout>
 
@@ -272,6 +275,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:hint="Zebrano"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -281,7 +285,7 @@
                 android:id="@+id/amountHarvest"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Zebrano"
+
                 android:inputType="numberSigned" />
 
         </android.support.design.widget.TextInputLayout>
@@ -292,5 +296,83 @@
     </android.support.constraint.ConstraintLayout>
 
 
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/stepEdit"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/employeeEditWrapper"
+            android:layout_width="0dp"
+
+
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:hint="Nazwa/Id pracownika"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/employeeEdit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:inputType="numberSigned" />
+        </android.support.design.widget.TextInputLayout>
+
+        <Button
+            android:id="@+id/editStateCancelBtn"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="Anuluj"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/editStateDeleteBtn"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="Usuń pracownika"
+            app:layout_constraintBottom_toTopOf="@+id/editStateCancelBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/editStateSaveBtn"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:backgroundTint="@color/colorPrimary"
+            android:text="Zapisz"
+            app:layout_constraintBottom_toTopOf="@+id/editStateDeleteBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+    </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>

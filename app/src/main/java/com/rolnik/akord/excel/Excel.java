@@ -176,11 +176,11 @@ public class Excel {
             int row = 3+i+1;
             excelSheet.addCell(new Label(1,row, employee.getName(), lightGreeenColourFormat));
 
-            int avgWeight = 0;
-            int avgPrice = 0;
+            double avgWeight = 0;
+            double avgPrice = 0;
 
-            int sumWeight = 0;
-            int sumPrice = 0;
+            double sumWeight = 0;
+            double sumPrice = 0;
 
             int amountColStart = 4;
             for (int z = 0; z < harvestList.size(); ++z) {

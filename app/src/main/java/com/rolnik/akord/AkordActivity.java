@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.BaseAdapter;
 import android.widget.Button;
@@ -104,6 +105,12 @@ public class AkordActivity extends AppCompatActivity {
     TextView harvestTodaySummary;
 
 
+    @ViewById(R.id.stepEdit)
+    ConstraintLayout stepEdit;
+
+    @ViewById(R.id.employeeEdit)
+    EditText employeeEdit;
+
     @ViewById(R.id.editEmployeePromptBtn)
     FloatingActionButton editEmployeePromptBtn;
 
@@ -119,11 +126,11 @@ public class AkordActivity extends AppCompatActivity {
     void init() {
         getSupportActionBar().setTitle("Akord");
 
-        priceSummary.setText(appPrefs.price().get().toString());
-        weightSummary.setText(appPrefs.weight().get().toString());
+        priceSummary.setText(appPrefs.price().get());
+        weightSummary.setText(appPrefs.weight().get());
 
-        price.setText(appPrefs.price().get().toString());
-        weight.setText(appPrefs.weight().get().toString());
+        price.setText(appPrefs.price().get());
+        weight.setText(appPrefs.weight().get());
 
 
         this.inputListener();
@@ -194,10 +201,10 @@ public class AkordActivity extends AppCompatActivity {
         InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
         imm.showSoftInput(amountHarvest, InputMethodManager.SHOW_IMPLICIT);
 
-        amountHarvest.setOnKeyListener(new View.OnKeyListener(){
+        amountHarvest.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
-            public boolean onKey(View v, int keyCode, KeyEvent event){
-                if(keyCode == event.KEYCODE_ENTER){
+            public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                if (actionId == EditorInfo.IME_ACTION_DONE) {
                     saveHarvestBtnClicked();
                 }
                 return false;
@@ -206,6 +213,9 @@ public class AkordActivity extends AppCompatActivity {
 
         priceSummary.setText(price.getText().toString());
         weightSummary.setText(weight.getText().toString());
+        employeeSummary.setText(employeeWithHarvestsList.get(employeeWithHarvestIndex).employee.getName());
+        harvestTodaySummary.setText(String.valueOf(employeeWithHarvestsList.get(employeeWithHarvestIndex).harvests.size()+1));
+
     }
 
 
@@ -213,8 +223,8 @@ public class AkordActivity extends AppCompatActivity {
     void saveHarvestBtnClicked() {
         harvest = new Harvest();
         harvest.setAmount(Integer.valueOf(amountHarvest.getText().toString()));
-        harvest.setCost(Integer.valueOf(priceSummary.getText().toString()));
-        harvest.setWeight(Integer.valueOf(weightSummary.getText().toString()));
+        harvest.setCost(Double.parseDouble(priceSummary.getText().toString()));
+        harvest.setWeight(Double.parseDouble(weightSummary.getText().toString()));
         harvest.setEmployeeId(employeeWithHarvestsList.get(employeeWithHarvestIndex).employee.getId());
         harvest.setHarvestAt(new Date());
         Log.i("test", harvest.log());
@@ -240,7 +250,7 @@ public class AkordActivity extends AppCompatActivity {
         employeeWithHarvestsList.get(employeeWithHarvestIndex).harvests.add(new Harvest());
         employeeListAdapter.disableSelected();
         employeeListAdapter.notifyDataSetChanged();
-        employeeWithHarvestIndex = 0;
+        //employeeWithHarvestIndex = 0;
     }
 
 
@@ -271,9 +281,6 @@ public class AkordActivity extends AppCompatActivity {
         dialog = builder.create();
         dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
         dialog.show();
-
-        //builder.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE);
-        //builder.show();
     }
 
     @Background()
@@ -288,12 +295,76 @@ public class AkordActivity extends AppCompatActivity {
 
     @ItemClick(R.id.employeeList)
     void employeeListItemClicked(int index) {
-        employeeListAdapter.setSelected(index);
         employeeWithHarvestIndex = index;
-        employeeListAdapter.notifyDataSetChanged();
-        nextBtn.setEnabled(true);
+        if (editState == false) {
+            employeeListAdapter.setSelected(index);
+            employeeListAdapter.notifyDataSetChanged();
+            nextBtn.setEnabled(true);
+        }else {
+            stepEdit.setVisibility(View.VISIBLE);
+            step1Layout.setVisibility(View.INVISIBLE);
+            employeeEdit.setText(employeeWithHarvestsList.get(employeeWithHarvestIndex).employee.getName());
+            nextBtn.setVisibility(View.INVISIBLE);
+        }
     }
 
+    @Click(R.id.editStateCancelBtn)
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void editStateCancelBtnClicked() {
+        stepEdit.setVisibility(View.INVISIBLE);
+        step1Layout.setVisibility(View.VISIBLE);
+        nextBtn.setVisibility(View.VISIBLE);
+        employeeListAdapter.notifyDataSetChanged();
+    }
+
+    @Click(R.id.editStateSaveBtn)
+    void editStateSaveBtnClicked() {
+        employeeWithHarvestsList.get(employeeWithHarvestIndex).employee.setName(employeeEdit.getText().toString());
+        updateEmployee(employeeWithHarvestsList.get(employeeWithHarvestIndex).employee);
+    }
+
+    @Click(R.id.editStateDeleteBtn)
+    void editStateDeleteBtnClicked() {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog dialog;
+        builder.setTitle("Usuwanie");
+        builder.setMessage("Napewno chcesz usunąć tego pracownika?");
+
+        builder.setPositiveButton("Zapisz", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteEmployee(employeeWithHarvestsList.get(employeeWithHarvestIndex).employee);
+            }
+        });
+        builder.setNegativeButton("Anuluj", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        builder.show();
+
+
+
+
+    }
+
+
+    @Background
+    void updateEmployee(Employee employee) {
+        dbInstance.provideEmployeeDao().update(employee);
+        editStateCancelBtnClicked();
+    }
+
+    @Background
+    void deleteEmployee(Employee employee) {
+        dbInstance.provideEmployeeDao().delete(employee);
+        dbInstance.provideHarvetDao().deleteHarvestsByEmployee(employee.getId());
+        employeeWithHarvestsList.remove(employeeWithHarvestIndex);
+        editStateCancelBtnClicked();
+    }
 
     @Click(R.id.editEmployeePromptBtn)
     void editEmployeePromptBtnClicked() {

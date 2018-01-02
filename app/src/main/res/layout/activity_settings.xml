@@ -24,7 +24,7 @@
         android:id="@+id/excelFileNameSettingsWrapper"
         android:layout_width="0dp"
 
-
+        android:hint="Nazwa pliku excel"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -38,7 +38,7 @@
             android:id="@+id/excelFileName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Nazwa pliku excel"
+
             android:inputType="text" />
 
     </android.support.design.widget.TextInputLayout>
@@ -48,7 +48,7 @@
         android:id="@+id/priceSettingsWrapper"
         android:layout_width="0dp"
 
-
+        android:hint="Stawka zł/kg"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -62,8 +62,8 @@
             android:id="@+id/priceSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Stawka zł/kg"
-            android:inputType="numberSigned" />
+
+            android:inputType="numberDecimal" />
 
     </android.support.design.widget.TextInputLayout>
 
@@ -71,7 +71,7 @@
         android:id="@+id/weightSettingsWrapper"
         android:layout_width="0dp"
 
-
+        android:hint="Stawka zł/kg"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
@@ -85,8 +85,8 @@
             android:id="@+id/weightSettings"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Stawka zł/kg"
-            android:inputType="numberSigned" />
+
+            android:inputType="numberDecimal" />
 
     </android.support.design.widget.TextInputLayout>
 

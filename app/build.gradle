@@ -54,8 +54,7 @@ dependencies {
     compile "org.androidannotations:androidannotations-api:$AAVersion"
     compile "android.arch.persistence.room:runtime:$roomVersion"
     annotationProcessor "android.arch.persistence.room:compiler:$roomVersion"
-    implementation project(':jxl')
     compile 'com.google.android.gms:play-services-drive:11.6.0'
     compile 'com.google.android.gms:play-services-auth:11.6.0'
-
+    implementation files('libs/jxl.jar')
 }

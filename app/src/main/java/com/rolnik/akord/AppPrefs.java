@@ -1,6 +1,5 @@
 package com.rolnik.akord;
 
-import org.androidannotations.annotations.sharedpreferences.DefaultInt;
 import org.androidannotations.annotations.sharedpreferences.DefaultString;
 import org.androidannotations.annotations.sharedpreferences.SharedPref;
 
@@ -15,10 +14,10 @@ public interface AppPrefs {
     String excelFileName();
 
 
-    @DefaultInt(1)
-    int price();
+    @DefaultString("1")
+    String price();
 
-    @DefaultInt(1)
-    int weight();
+    @DefaultString("1")
+    String weight();
 
 }

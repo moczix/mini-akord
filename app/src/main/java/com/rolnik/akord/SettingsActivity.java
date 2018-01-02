@@ -38,8 +38,8 @@ public class SettingsActivity extends AppCompatActivity {
     void SaveBtnClicked() {
         appPrefs.edit()
                 .excelFileName().put(excelFileNameEditText.getText().toString())
-                .price().put(Integer.parseInt(priceSettingsEditText.getText().toString()))
-                .weight().put(Integer.parseInt(weightSettingsEditText.getText().toString()))
+                .price().put(priceSettingsEditText.getText().toString())
+                .weight().put(weightSettingsEditText.getText().toString())
                 .apply();
 
         Toast.makeText(this, "Zapisano", Toast.LENGTH_SHORT).show();
