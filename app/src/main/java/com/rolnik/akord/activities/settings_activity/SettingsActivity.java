@@ -1,8 +1,13 @@
-package com.rolnik.akord;
+package com.rolnik.akord.activities.settings_activity;
 
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.rolnik.akord.AppPrefs_;
+import com.rolnik.akord.R;
 
 import org.androidannotations.annotations.AfterViews;
 import org.androidannotations.annotations.Click;
@@ -29,9 +34,22 @@ public class SettingsActivity extends AppCompatActivity {
 
     @AfterViews
     void init() {
+        getSupportActionBar().setTitle("Ustawienia");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         excelFileNameEditText.setText(appPrefs.excelFileName().get());
         priceSettingsEditText.setText(appPrefs.price().get().toString());
         weightSettingsEditText.setText(appPrefs.weight().get().toString());
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Click(R.id.saveBtn)

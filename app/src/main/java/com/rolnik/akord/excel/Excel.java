@@ -1,14 +1,10 @@
 package com.rolnik.akord.excel;
 
-import android.os.Environment;
-import android.util.Log;
-
 import com.rolnik.akord.db.Employee;
 import com.rolnik.akord.db.EmployeeWithHarvests;
 import com.rolnik.akord.db.Harvest;
 import com.rolnik.akord.db.converters.DateConverter;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
@@ -16,7 +12,6 @@ import java.util.List;
 
 import jxl.CellView;
 import jxl.Workbook;
-import jxl.WorkbookSettings;
 import jxl.format.Alignment;
 import jxl.format.Border;
 import jxl.format.BorderLineStyle;
@@ -30,189 +25,202 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * Created by moczniak on 01.01.2018.
  */
 
-public class Excel {
-    private WritableWorkbook createWorkbook(String fileName){
-        //exports must use a temp file while writing to avoid memory hogging
-        WorkbookSettings wbSettings = new WorkbookSettings();
-        wbSettings.setUseTemporaryFileDuringWrite(true);
+class EmployeeCalc {
 
-        //get the sdcard's directory
-        File sdCard = Environment.getExternalStorageDirectory();
-        //add on the your app's path
-        File dir = new File(sdCard.getAbsolutePath() );
-        //make them in case they're not there
-        dir.mkdirs();
-        //create a standard java.io.File object for the Workbook to use
-        File wbfile = new File(dir,fileName);
+    public double avgWeight = 0;
+    public double avgPrice = 0;
 
-        WritableWorkbook wb = null;
+    public double sumWeight = 0;
+    public double sumPrice = 0;
 
-        try{
-            //create a new WritableWorkbook using the java.io.File and
-            //WorkbookSettings from above
-            wb = Workbook.createWorkbook(wbfile,wbSettings);
-        }catch(IOException ex){
-            Log.e(TAG,ex.getStackTrace().toString());
-            Log.e(TAG, ex.getMessage());
+    void calc(List<Harvest> dataSet) {
+        for (int z = 0; z < dataSet.size(); ++z) {
+            sumWeight += dataSet.get(z).getWeight();
+            sumPrice += dataSet.get(z).getCost();
         }
-
-        return wb;
+        if (dataSet.size() > 0){
+            avgWeight = sumWeight / dataSet.size();
+            avgPrice = sumPrice / dataSet.size();
+        }
     }
+}
 
 
-    public void prepareExcel(List<EmployeeWithHarvests> employeeWithHarvestsList) throws WriteException, IOException {
-        WritableWorkbook excelFile = createWorkbook("pierwszy.xls");
+public class Excel {
 
-        // create an Excel sheet
-        WritableSheet excelSheet = excelFile.createSheet("Sheet 1", 0);
+    private WritableCellFormat titleCellFormat;
+    private WritableCellFormat centerWithBorderThinCellFormat;
+    private WritableCellFormat greenWithBorderThinCellFormat;
+    private WritableCellFormat redWithBorderThinCellFormat;
+    private WritableCellFormat borderCellFormat;
+    private WritableCellFormat borderThinCellFormat;
 
-        // add something into the Excel sheet
-        Label label = new Label(0, 0, "Test Count");
-        excelSheet.addCell(label);
 
-        Number number = new Number(0, 1, 1);
-        excelSheet.addCell(number);
+    private char[] alphabet = new char[26];
 
-        label = new Label(1, 0, "Result");
-        excelSheet.addCell(label);
+    List<EmployeeWithHarvests> mDataSet;
 
-        label = new Label(1, 1, "Passed");
-        excelSheet.addCell(label);
-
-        number = new Number(0, 2, 2);
-        excelSheet.addCell(number);
-
-        label = new Label(1, 2, "Passed 2");
-        excelSheet.addCell(label);
-
-        excelFile.write();
-        excelFile.close();
-
-    }
-
-    public void prepareExcelInMemory(List<EmployeeWithHarvests> employeeWithHarvestsList, OutputStream out) throws WriteException, IOException {
-            WritableWorkbook excelFile = Workbook.createWorkbook(out);
-        char[] alphabet = new char[26];
+    public Excel() {
         int k = 0;
         for(int i = 0; i < 26; i++){
             alphabet[i] = (char)(65 + (k++));
         }
+    }
 
+    public void setData(List<EmployeeWithHarvests> data) {
+        mDataSet = data;
+    }
+
+    private int  getHarvestSize() {
         int harvestSize = 0;
-        for (EmployeeWithHarvests employeeWithHarvests : employeeWithHarvestsList) {
-            if (employeeWithHarvests.harvests.size() > harvestSize) {
-                harvestSize = employeeWithHarvests.harvests.size();
+        for (EmployeeWithHarvests el : mDataSet) {
+            if (el.harvests.size() > harvestSize) {
+                harvestSize = el.harvests.size();
             }
         }
         harvestSize-=1;
+        return harvestSize;
+    }
 
-        WritableSheet excelSheet = excelFile.createSheet("Sheet 1", 0);
-
-        WritableCellFormat cFormat = new WritableCellFormat();
+    private void prepareStyles() throws WriteException {
+        titleCellFormat = new WritableCellFormat();
         WritableFont font = new WritableFont(WritableFont.ARIAL, 12, WritableFont.BOLD);
-        cFormat.setFont(font);
+        titleCellFormat.setFont(font);
 
-        WritableCellFormat centerformat = new WritableCellFormat();
-        centerformat.setAlignment(Alignment.CENTRE);
-        centerformat.setBorder(Border.ALL, BorderLineStyle.THIN);
+        centerWithBorderThinCellFormat = new WritableCellFormat();
+        centerWithBorderThinCellFormat.setAlignment(Alignment.CENTRE);
+        centerWithBorderThinCellFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
 
-        WritableCellFormat lightGreeenColourFormat = new WritableCellFormat();
+        greenWithBorderThinCellFormat = new WritableCellFormat();
+        greenWithBorderThinCellFormat.setBackground(Colour.LIGHT_TURQUOISE);
+        greenWithBorderThinCellFormat.setBorder(Border.ALL, BorderLineStyle.THICK);
 
-        lightGreeenColourFormat.setBackground(Colour.LIGHT_TURQUOISE);
-        lightGreeenColourFormat.setBorder(Border.ALL, BorderLineStyle.THICK);
+        borderCellFormat = new WritableCellFormat();
+        borderCellFormat.setBorder(Border.ALL, BorderLineStyle.THICK);
 
-        WritableCellFormat justBorder = new WritableCellFormat();
-        justBorder.setBorder(Border.ALL, BorderLineStyle.THICK);
+        borderThinCellFormat = new WritableCellFormat();
+        borderThinCellFormat.setBorder(Border.ALL, BorderLineStyle.THIN);
 
-        WritableCellFormat justBorderThin = new WritableCellFormat();
-        justBorderThin.setBorder(Border.ALL, BorderLineStyle.THIN);
+        redWithBorderThinCellFormat = new WritableCellFormat();
+        redWithBorderThinCellFormat.setBackground(Colour.LIGHT_ORANGE);
+        redWithBorderThinCellFormat.setBorder(Border.ALL, BorderLineStyle.THICK);
+    }
 
-        WritableCellFormat redColourFormat = new WritableCellFormat();
-        redColourFormat.setBackground(Colour.LIGHT_ORANGE);
-        redColourFormat.setBorder(Border.ALL, BorderLineStyle.THICK);
+
+    String sumFormula(int colStart,int colEnd, int row ) {
+        colEnd--;
+        return "SUM("+alphabet[colStart]+""+row+":"+alphabet[colEnd]+""+row+")";
+    }
+
+    String sumFormulaCol(int col, int rowStart, int rowEnd ) {
+        return "SUM("+alphabet[col]+""+rowStart+":"+alphabet[col]+""+rowEnd+")";
+    }
+
+    String multiplyFormula(int colStart,int colEnd, int row) {
+        colEnd--;
+        return alphabet[colStart]+""+row+"*"+alphabet[colEnd]+""+row;
+    }
+
+    public void prepareExcelInMemory(OutputStream out) throws WriteException, IOException {
+        WritableWorkbook excelFile = Workbook.createWorkbook(out);
+        String today = DateConverter.dfPattern.format(new Date());
+        WritableSheet excelSheet = excelFile.createSheet("Arkusz 1", 0);
+
+        prepareStyles();
+        int harvestSize = getHarvestSize();
+
+        int startColumn = 1;
+        int startRow = 1;
+
+
 
         //COLUMN, ROW
-        excelSheet.addCell(new Label(1, 1, "DATA", cFormat));
+        excelSheet.addCell(new Label(startColumn, startRow, "DATA", titleCellFormat));
+        int dateValColumn = startColumn+3;
+        excelSheet.addCell(new Label(dateValColumn, startRow, today, titleCellFormat));
+        excelSheet.mergeCells(dateValColumn, startRow, dateValColumn+1, startRow);//dateVal equal 2col
 
-        String today = DateConverter.dfPattern.format(new Date());
+        int dataTitleRow = startRow+2;//3
 
-        excelSheet.addCell(new Label(4, 1, today, cFormat));
-        excelSheet.mergeCells(4, 1, 5, 1);
+        int employeeCol = startColumn;//1
+        int weightCol = startColumn+1;//2
+        int priceCol = startColumn+2;//3
 
-        excelSheet.addCell(new Label(1,3, "nr rwacza", justBorder));
-        excelSheet.addCell(new Label(2,3, "waga kg/szt", justBorder));
-        excelSheet.addCell(new Label(3,3, "stawka zł/kg", justBorder));
+        int harvestCol = startColumn+3;//4
 
-        autoSize(1, excelSheet);
-        autoSize(2, excelSheet);
-        autoSize(3, excelSheet);
+        int dataRowNo = dataTitleRow+1;//4
+
+        int quantitySumCol = harvestCol+harvestSize+1;//5 razem szt
+        int weightSumCol = harvestCol+harvestSize+2;//6 razem kg
+        int moneySumCol = harvestCol+harvestSize+3;//7 razem zl
+
+
+        excelSheet.addCell(new Label(employeeCol,dataTitleRow, "nr rwacza", borderCellFormat));
+        excelSheet.addCell(new Label(weightCol,dataTitleRow, "waga kg/szt", borderCellFormat));
+        excelSheet.addCell(new Label(priceCol,dataTitleRow, "stawka zł/kg", borderCellFormat));
+
+        autoSize(employeeCol, excelSheet);
+        autoSize(weightCol, excelSheet);
+        autoSize(priceCol, excelSheet);
 
 
 
-        excelSheet.addCell(new Label(4,3, "zebrane szt.", centerformat));
+        excelSheet.addCell(new Label(harvestCol,dataTitleRow, "zebrane szt.", centerWithBorderThinCellFormat));
 
         //column, row, column, row
-        excelSheet.mergeCells(4,3, 4+harvestSize, 3);
-        excelSheet.addCell(new Label(5+harvestSize, 3, "razem szt.", justBorder) );
-        excelSheet.addCell(new Label(6+harvestSize, 3, "razem kg.", justBorder) );
-        excelSheet.addCell(new Label(7+harvestSize, 3, "razem zł.", justBorder) );
-
-        autoSize(5+harvestSize, excelSheet);
-        autoSize(6+harvestSize, excelSheet);
-        autoSize(7+harvestSize, excelSheet);
+        excelSheet.mergeCells(harvestCol,dataTitleRow, harvestCol+harvestSize, dataTitleRow);
 
 
 
-        for (int i =0; i < employeeWithHarvestsList.size(); ++i) {
-            Employee employee = employeeWithHarvestsList.get(i).employee;
-            List<Harvest> harvestList = employeeWithHarvestsList.get(i).harvests;
+        excelSheet.addCell(new Label(quantitySumCol, dataTitleRow, "razem szt.", borderCellFormat) ); //razem szt
+        excelSheet.addCell(new Label(weightSumCol, dataTitleRow, "razem kg.", borderCellFormat) ); //razem kg
+        excelSheet.addCell(new Label(moneySumCol, dataTitleRow, "razem zł.", borderCellFormat) ); //razem zl
 
-            int row = 3+i+1;
-            excelSheet.addCell(new Label(1,row, employee.getName(), lightGreeenColourFormat));
+        autoSize(quantitySumCol, excelSheet);
+        autoSize(weightSumCol, excelSheet);
+        autoSize(moneySumCol, excelSheet);
 
-            double avgWeight = 0;
-            double avgPrice = 0;
 
-            double sumWeight = 0;
-            double sumPrice = 0;
 
-            int amountColStart = 4;
+        for (int i =0; i < mDataSet.size(); ++i) {
+            Employee employee = mDataSet.get(i).employee;
+            List<Harvest> harvestList = mDataSet.get(i).harvests;
+
+            int row = dataRowNo+i;
+            excelSheet.addCell(new Label(1,row, employee.getName(), greenWithBorderThinCellFormat));//employee Name
+
+            EmployeeCalc employeeCalc = new EmployeeCalc();
+            employeeCalc.calc(harvestList);
+
             for (int z = 0; z < harvestList.size(); ++z) {
-                excelSheet.addCell(new Number(amountColStart+z, row, harvestList.get(z).getAmount(), justBorderThin));
-                sumWeight += harvestList.get(z).getWeight();
-                sumPrice += harvestList.get(z).getCost();
+                excelSheet.addCell(new Number(harvestCol+z, row, harvestList.get(z).getAmount(), borderThinCellFormat));// harvest amount
             }
-            if (harvestList.size() > 0){
-                avgWeight = sumWeight / harvestList.size();
-                avgPrice = sumPrice / harvestList.size();
-            }
-            excelSheet.addCell(new Number(2, row, avgWeight, lightGreeenColourFormat));
-            excelSheet.addCell(new Number(3, row, avgPrice, lightGreeenColourFormat));
+            excelSheet.addCell(new Number(weightCol, row, employeeCalc.avgWeight, greenWithBorderThinCellFormat));//avg weight
+            excelSheet.addCell(new Number(priceCol, row, employeeCalc.avgPrice, greenWithBorderThinCellFormat));//avg price
 
             int formulaRow = row+1;
-            String formula = "SUM("+alphabet[4]+""+formulaRow+":"+alphabet[(4+harvestSize)]+""+formulaRow+")";
-            Log.i("test", "formula: " + formula);
-            excelSheet.addCell(new Formula(5+harvestSize, row, formula, redColourFormat));
-            excelSheet.addCell(new Formula(6+harvestSize, row, "C"+formulaRow+"*"+alphabet[5+harvestSize]+""+formulaRow, redColourFormat));
-            excelSheet.addCell(new Formula(7+harvestSize, row, "D"+formulaRow+"*"+alphabet[6+harvestSize]+""+formulaRow, justBorder));
+
+            excelSheet.addCell(new Formula(quantitySumCol, row, sumFormula(harvestCol,quantitySumCol, formulaRow ), redWithBorderThinCellFormat)); //razem szt
+            excelSheet.addCell(new Formula(weightSumCol, row, multiplyFormula(weightCol, weightSumCol, formulaRow), redWithBorderThinCellFormat)); //razem kg
+            excelSheet.addCell(new Formula(moneySumCol, row, multiplyFormula(priceCol, moneySumCol, formulaRow), borderCellFormat)); //razem zl
         }
 
-        int rowMax = 3+employeeWithHarvestsList.size()+1;
+        int rowMax = 3+mDataSet.size()+1;
 
-        excelSheet.addCell(new Label(1, rowMax+1, "razem", lightGreeenColourFormat));
-        excelSheet.addCell(new Label(5+harvestSize, rowMax, "szt"));
-        excelSheet.addCell(new Label(6+harvestSize, rowMax, "kg"));
-        excelSheet.addCell(new Label(7+harvestSize, rowMax, "zł"));
+        excelSheet.addCell(new Label(1, rowMax+1, "razem", greenWithBorderThinCellFormat));
+        excelSheet.addCell(new Label(quantitySumCol, rowMax, "szt")); //razem szt
+        excelSheet.addCell(new Label(weightSumCol, rowMax, "kg")); //razem kg
+        excelSheet.addCell(new Label(moneySumCol, rowMax, "zł")); //razem zl
 
-        excelSheet.addCell(new Formula(5+harvestSize, rowMax+1, "SUM("+alphabet[5+harvestSize]+"5:"+alphabet[5+harvestSize]+""+(rowMax)+")", redColourFormat));
-        excelSheet.addCell(new Formula(6+harvestSize, rowMax+1, "SUM("+alphabet[6+harvestSize]+"5:"+alphabet[6+harvestSize]+""+(rowMax)+")", redColourFormat));
-        excelSheet.addCell(new Formula(7+harvestSize, rowMax+1, "SUM("+alphabet[7+harvestSize]+"5:"+alphabet[7+harvestSize]+""+(rowMax)+")"));
+
+
+        excelSheet.addCell(new Formula(quantitySumCol, rowMax+1, sumFormulaCol(quantitySumCol, dataRowNo+1, rowMax), redWithBorderThinCellFormat)); //razem szt
+        excelSheet.addCell(new Formula(weightSumCol, rowMax+1, sumFormulaCol(weightSumCol, dataRowNo+1, rowMax), redWithBorderThinCellFormat)); //razem kg
+        excelSheet.addCell(new Formula(moneySumCol, rowMax+1, sumFormulaCol(moneySumCol, dataRowNo+1, rowMax)));//razem zl
         excelFile.write();
         excelFile.close();
     }

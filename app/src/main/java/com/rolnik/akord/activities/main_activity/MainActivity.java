@@ -1,9 +1,14 @@
-package com.rolnik.akord;
+package com.rolnik.akord.activities.main_activity;
 
 import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
+import com.rolnik.akord.R;
+import com.rolnik.akord.activities.akord_activity.AkordActivity_;
+import com.rolnik.akord.activities.export_activity.ExportActivity_;
+import com.rolnik.akord.activities.overview_activity.OverviewActivity_;
+import com.rolnik.akord.activities.settings_activity.SettingsActivity_;
 import com.rolnik.akord.db.DbInstance;
 
 import org.androidannotations.annotations.AfterViews;
@@ -16,11 +21,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 
+
 @EActivity(R.layout.activity_main)
 public class MainActivity extends AppCompatActivity {
 
     @Bean
     DbInstance dbInstance;
+
+
 
     private String expirationDate = "2018-01-05";//yyyy-MM-dd
     private boolean isExpired = false;

@@ -4,53 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rolnik.akord.AkordActivity">
-
-
-    <Button
-        android:id="@+id/nextBtn"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="Dalej"
-        android:enabled="false"
-
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/saveHarvestBtn"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:enabled="false"
-        android:text="Następny pracownik"
-        android:visibility="invisible"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+    tools:context="com.rolnik.akord.activities.akord_activity.AkordActivity">
 
 
     <android.support.constraint.ConstraintLayout
         android:id="@+id/step1"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
         android:focusableInTouchMode="true"
-        app:layout_constraintBottom_toTopOf="@+id/nextBtn"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
+
+        <Button
+            android:id="@+id/nextBtn"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:enabled="false"
+            android:text="Dalej"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <android.support.design.widget.FloatingActionButton
             android:id="@+id/addEmployeePromptBtn"
@@ -79,14 +60,11 @@
             app:srcCompat="@drawable/ic_create_white_24dp" />
 
 
-
-
-
         <ListView
             android:id="@+id/employeeList"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/nextBtn"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/weightWrapper" />
@@ -118,11 +96,11 @@
             android:id="@+id/weightWrapper"
             android:layout_width="0dp"
 
-            android:hint="Waga kg/szt"
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
+            android:hint="Waga kg/szt"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -145,16 +123,41 @@
         android:id="@+id/step2"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginStart="0dp"
-        android:layout_marginTop="0dp"
         android:visibility="invisible"
-        app:layout_constraintBottom_toTopOf="@+id/saveHarvestBtn"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
+        <Button
+            android:id="@+id/saveHarvestBtn"
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:enabled="false"
+            android:text="Następny pracownik"
+            app:layout_constraintBottom_toTopOf="@+id/backToStep1"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+
+        <Button
+            android:id="@+id/backToStep1"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+
+            android:layout_marginStart="8dp"
+            android:text="Wróć do listy"
+            app:layout_constraintBottom_toBottomOf="parent"
+
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <LinearLayout
             android:id="@+id/summary1"
@@ -169,20 +172,22 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Pracownik: "
-                android:textAppearance="@style/TextAppearance.AppCompat" />
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/employeeSummary"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="01-"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textSize="14sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
         <LinearLayout
@@ -199,20 +204,22 @@
             tools:layout_editor_absoluteY="76dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="Zliczenie: "
-                android:textAppearance="@style/TextAppearance.AppCompat" />
+                android:textAppearance="@style/TextAppearance.AppCompat"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/harvestTodaySummary"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="1"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-                android:textSize="14sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
         </LinearLayout>
 
 
@@ -264,8 +271,6 @@
         </android.support.design.widget.TextInputLayout>
 
 
-
-
         <android.support.design.widget.TextInputLayout
             android:id="@+id/amountHarvestWrapper"
             android:layout_width="0dp"
@@ -289,8 +294,6 @@
                 android:inputType="numberSigned" />
 
         </android.support.design.widget.TextInputLayout>
-
-
 
 
     </android.support.constraint.ConstraintLayout>

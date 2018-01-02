@@ -1,10 +1,15 @@
-package com.rolnik.akord;
+package com.rolnik.akord.activities.export_activity;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -21,6 +26,8 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
+import com.rolnik.akord.AppPrefs_;
+import com.rolnik.akord.R;
 import com.rolnik.akord.db.DbInstance;
 import com.rolnik.akord.db.Employee;
 import com.rolnik.akord.db.EmployeeWithHarvests;
@@ -53,6 +60,11 @@ public class ExportActivity extends AppCompatActivity {
     @ViewById(R.id.excelFileName)
     EditText excelFileName;
 
+    @ViewById(R.id.loadingBar)
+    ProgressBar loadingBar;
+
+    @ViewById(R.id.loadingText)
+    TextView loadingText;
 
     List<EmployeeWithHarvests> employeeWithHarvestsList = new ArrayList<>();
 
@@ -67,8 +79,20 @@ public class ExportActivity extends AppCompatActivity {
     @AfterViews
     void init() {
         getSupportActionBar().setTitle("Eksport");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         excelFileName.setText(appPrefs.excelFileName().get());
         //saveExcel();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Click(R.id.addDateBtn)
@@ -82,20 +106,57 @@ public class ExportActivity extends AppCompatActivity {
     @Click(R.id.exportBtn)
     void exportBtnClicked() {
         fileName = excelFileName.getText().toString();
+        showProgressBar();
         saveExcel();
     }
+
+    @Background
+    void saveExcel() {
+        List<Employee> allEmployees = dbInstance.provideEmployeeDao().getAllOrderByName();
+        String today = DateConverter.dfPattern.format(new Date());
+
+        for (Employee employee : allEmployees) {
+            EmployeeWithHarvests listEl = new EmployeeWithHarvests();
+            listEl.employee = employee;
+            listEl.harvests = dbInstance.provideHarvetDao().getEmployeeHarvestByDate(employee.getId(), today);
+            employeeWithHarvestsList.add(listEl);
+        }
+
+        if (employeeWithHarvestsList.size() > 0) {
+            googleSignIn();
+        }else {
+            showEmptyListToast();
+        }
+    }
+
+
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void showSuccess() {
+        hideProgressBar();
         Toast.makeText(this, "Zapisano", Toast.LENGTH_SHORT).show();
     }
 
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void showError() {
+        hideProgressBar();
         Toast.makeText(this, "Wystąpił błąd podczas eksportu", Toast.LENGTH_SHORT).show();
     }
     @UiThread(propagation = UiThread.Propagation.REUSE)
     void showEmptyListToast() {
+        hideProgressBar();
         Toast.makeText(this, "Brak danych do eksportu", Toast.LENGTH_SHORT).show();
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void showProgressBar() {
+        loadingBar.setVisibility(View.VISIBLE);
+        loadingText.setVisibility(View.VISIBLE);
+    }
+
+    @UiThread(propagation = UiThread.Propagation.REUSE)
+    void hideProgressBar() {
+        loadingBar.setVisibility(View.INVISIBLE);
+        loadingText.setVisibility(View.INVISIBLE);
     }
 
 
@@ -127,7 +188,8 @@ public class ExportActivity extends AppCompatActivity {
                         DriveContents contents = createContentsTask.getResult();
 
                         Excel excel = new Excel();
-                        excel.prepareExcelInMemory(employeeWithHarvestsList, contents.getOutputStream());
+                        excel.setData(employeeWithHarvestsList);
+                        excel.prepareExcelInMemory(contents.getOutputStream());
 
                         MetadataChangeSet changeSet = new MetadataChangeSet.Builder()
                                 .setTitle(fileName+".xls")
@@ -161,33 +223,14 @@ public class ExportActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CODE_SIGN_IN && resultCode == RESULT_OK) {
-            //mDriveClient = Drive.getDriveClient(this, GoogleSignIn.getLastSignedInAccount(this));
             mDriveResourceClient = Drive.getDriveResourceClient(this, GoogleSignIn.getLastSignedInAccount(this));
             saveFileToDrive();
-        }
-    }
-
-
-    @Background
-    void saveExcel() {
-        List<Employee> allEmployees = dbInstance.provideEmployeeDao().getAllOrderByName();
-        String today = DateConverter.dfPattern.format(new Date());
-
-        for (Employee employee : allEmployees) {
-            EmployeeWithHarvests listEl = new EmployeeWithHarvests();
-            listEl.employee = employee;
-            listEl.harvests = dbInstance.provideHarvetDao().getEmployeeHarvestByDate(employee.getId(), today);
-            employeeWithHarvestsList.add(listEl);
-        }
-
-        if (employeeWithHarvestsList.size() > 0) {
-            googleSignIn();
         }else {
-            showEmptyListToast();
+            hideProgressBar();
         }
-
-
-
     }
+
+
+
 
 }

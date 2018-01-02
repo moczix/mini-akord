@@ -29,8 +29,8 @@ public interface EmployeeDao {
     @Query("SELECT * FROM employees WHERE name = :name")
     Employee findByName(String name);
 
-
-
+    @Query("SELECT COUNT(*) FROM employees WHERE name = :name")
+    int countByName(String name);
 
     @Insert
     long[] insertAll(Employee... employees);

@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".MainActivity_"
+            android:name=".activities.main_activity.MainActivity_"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,10 +18,26 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".AkordActivity_" />
-        <activity android:name=".ExportActivity_" />
-        <activity android:name=".OverviewActivity_" />
-        <activity android:name=".SettingsActivity_" />
+        <activity android:name=".activities.akord_activity.AkordActivity_" android:parentActivityName=".activities.main_activity.MainActivity_" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.main_activity.MainActivity_" />
+        </activity>
+        <activity android:name=".activities.export_activity.ExportActivity_" android:parentActivityName=".activities.main_activity.MainActivity_">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.main_activity.MainActivity_" />
+        </activity>
+        <activity android:name=".activities.overview_activity.OverviewActivity_" android:parentActivityName=".activities.main_activity.MainActivity_">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.main_activity.MainActivity_" />
+        </activity>
+        <activity android:name=".activities.settings_activity.SettingsActivity_" android:parentActivityName=".activities.main_activity.MainActivity_">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.main_activity.MainActivity_" />
+        </activity>
     </application>
 
 </manifest>
