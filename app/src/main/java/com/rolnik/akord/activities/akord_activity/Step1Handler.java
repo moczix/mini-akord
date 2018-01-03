@@ -58,6 +58,8 @@ public class Step1Handler {
 
     private boolean editState = false;
 
+    private boolean enabledNextBtn = false;
+
     private TalkStep1HandlerWithActivity talkStep1HandlerWithActivity;
 
     private AkordListAdapter akordListAdapterRef;
@@ -93,8 +95,9 @@ public class Step1Handler {
         weight.setText(appPrefs.weight().get());
     }
 
-    void enableNextBtn() {
-        nextBtn.setEnabled(true);
+    void enableNextBtn() {//klient zmienil zdanie
+        //nextBtn.setEnabled(true);
+        enabledNextBtn = true;
     }
 
     @Background
@@ -120,7 +123,21 @@ public class Step1Handler {
 
     @Click(R.id.nextBtn)
     void nextBtnClicked() {
-        talkStep1HandlerWithActivity.switchToStep2View();
+        if (enabledNextBtn) {
+            talkStep1HandlerWithActivity.switchToStep2View();
+        }else{
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            AlertDialog dialog;
+            builder.setTitle("Błąd");
+            builder.setMessage("Musisz wybrać pracownika z listy lub dodać nowego!");
+
+            builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                }
+            });
+            builder.show();
+        }
     }
 
 

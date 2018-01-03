@@ -10,7 +10,7 @@ import org.androidannotations.annotations.sharedpreferences.SharedPref;
 @SharedPref(value = SharedPref.Scope.APPLICATION_DEFAULT)
 public interface AppPrefs {
 
-    @DefaultString("RolniAkord")
+    @DefaultString("MiniAkord")
     String excelFileName();
 
 

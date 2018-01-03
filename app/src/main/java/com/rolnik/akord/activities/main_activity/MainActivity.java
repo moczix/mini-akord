@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     void init() {
         dbInstance.init();
 
-        checkExpiration();
-        showDemoAlert();
+        //checkExpiration();//demo off
+        //showDemoAlert(); //demo off
     }
 
     void checkExpiration() {
