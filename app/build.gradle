@@ -2,22 +2,16 @@ apply plugin: 'com.android.application'
 
 android {
     signingConfigs {
-        release {
+        config {
             keyAlias 'rolniakord'
             keyPassword 'zlecenie20'
-            storeFile file('C:/Users/moczniak/AndroidStudioProjects/RolniAkord/my-release-key.keystore')
-            storePassword 'zlecenie20'
-        }
-        debug {
-            keyAlias 'rolniakord'
-            keyPassword 'zlecenie20'
-            storeFile file('C:/Users/moczniak/AndroidStudioProjects/RolniAkord/my-release-key.keystore')
+            storeFile file('C:/Users/moczniak/AndroidStudioProjects/MiniAkord/my-release-key.keystore')
             storePassword 'zlecenie20'
         }
     }
     compileSdkVersion 26
     defaultConfig {
-        applicationId "com.rolnik.akord"
+        applicationId "com.mini.akord"
         minSdkVersion 17
         targetSdkVersion 26
         versionCode 2
@@ -29,10 +23,10 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.config
         }
         debug {
-            signingConfig signingConfigs.debug
+            signingConfig signingConfigs.config
         }
     }
 }

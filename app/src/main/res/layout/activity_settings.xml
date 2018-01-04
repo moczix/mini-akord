@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rolnik.akord.activities.settings_activity.SettingsActivity">
+    tools:context="com.mini.akord.activities.settings_activity.SettingsActivity">
 
 
     <Button
@@ -71,7 +71,7 @@
         android:id="@+id/weightSettingsWrapper"
         android:layout_width="0dp"
 
-        android:hint="Stawka zł/kg"
+        android:hint="Waga kg/szt"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"

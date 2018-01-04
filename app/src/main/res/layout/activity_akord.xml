@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.rolnik.akord.activities.akord_activity.AkordActivity">
+    tools:context="com.mini.akord.activities.akord_activity.AkordActivity">
 
 
     <android.support.constraint.ConstraintLayout

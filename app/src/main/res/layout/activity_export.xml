@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context="com.rolnik.akord.activities.export_activity.ExportActivity">
+    tools:context="com.mini.akord.activities.export_activity.ExportActivity">
 
 
     <android.support.design.widget.TextInputLayout
